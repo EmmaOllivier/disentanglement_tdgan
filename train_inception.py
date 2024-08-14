@@ -102,8 +102,8 @@ def train(hpar_dict):
         biovid_annot_train="../train"+str(fold)+"_order.csv"
         biovid_annot_val = "../valid"+str(fold)+"_order.csv"
 
-        dataset_train = data_loader.DualTrainDataset(Biovid_img_all,biovid_annot_train,biovid_annot_train,transform = tr.transform,IDs = None,nb_image = 200,preload=False)
-        dataset_val = data_loader.Dataset_Biovid_image_binary_class(Biovid_img_all,biovid_annot_val,transform = tr_test.transform,IDs = None,nb_image = 200 ,preload=False)
+        dataset_train = data_loader.DualTrainDataset(Biovid_img_all,biovid_annot_train,biovid_annot_train,transform = tr.transform,IDs = None,nb_image = None,preload=False)
+        dataset_val = data_loader.Dataset_Biovid_image_binary_class(Biovid_img_all,biovid_annot_val,transform = tr_test.transform,IDs = None,nb_image = None ,preload=False)
 
         print("data loaded")
 
