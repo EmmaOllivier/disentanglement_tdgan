@@ -331,12 +331,12 @@ def train(hpar_dict):
                     if tt_acc > acc_max:
  
                         acc_max = tt_acc
-                        torch.save(Gen.enc_ER.state_dict(), os.path.join(par_dir, 'Enc_ER_G'+str(e)+'.pkl'))
-                        torch.save(Gen.enc_FR.state_dict(), os.path.join(par_dir, 'Enc_FR_G'+str(e)+'.pkl'))
-                        torch.save(Gen.fc_ER.state_dict(), os.path.join(par_dir, 'fc_ER_G'+str(e)+'.pkl'))
-                        torch.save(Gen.dec.state_dict(), os.path.join(par_dir, 'dec'+str(e)+'.pkl'))
-                        torch.save(Dis_FR.state_dict(), os.path.join(par_dir, 'Dis_FR'+str(e)+'.pkl'))
-                        torch.save(Dis_ER.state_dict(), os.path.join(par_dir, 'Dis_ER'+str(e)+'.pkl'))
+                        torch.save(Gen.enc_ER.state_dict(), os.path.join(par_dir, 'Enc_ER_G.pkl'))
+                        torch.save(Gen.enc_FR.state_dict(), os.path.join(par_dir, 'Enc_FR_G.pkl'))
+                        torch.save(Gen.fc_ER.state_dict(), os.path.join(par_dir, 'fc_ER_G.pkl'))
+                        torch.save(Gen.dec.state_dict(), os.path.join(par_dir, 'dec.pkl'))
+                        torch.save(Dis_FR.state_dict(), os.path.join(par_dir, 'Dis_FR.pkl'))
+                        torch.save(Dis_ER.state_dict(), os.path.join(par_dir, 'Dis_ER.pkl'))
                         
                     print('\n')
                     print('the %d-th epoch' % (e))
