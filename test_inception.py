@@ -7,7 +7,8 @@ import torch.utils.data
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 from torch.autograd import Variable
-import models as model
+import models_resnet as model
+import models_inception
 import numpy as np
 import pandas as pd
 import data_loader
@@ -45,7 +46,7 @@ def Val_acc(loader, Dis, criterion, device):
     GT_list = []
     val_ce = 0
     loop_test = tqdm(loader ,colour='GREEN')
-    for i, (batch_val_x, batch_val_y, batch_val_id_y) in enumerate(loop_test):
+    for i, (batch_val_x, batch_val_y, batch_val_id_y, _) in enumerate(loop_test):
         GT_list = np.hstack((GT_list, batch_val_y.numpy()))
         batch_val_x = Variable(batch_val_x).to(device)
         batch_val_y = Variable(batch_val_y).to(device)
@@ -120,18 +121,17 @@ def test():
   
     Resolution=128
 
-
-    pre_root_dir="/export/livia/home/vision/Eollivier/models/experience_GAN_Biovid_protocole_fold_deterministic_Biovid_corrected/3/best_parameters/"
-    Biovid_img_all = '/export/livia/home/vision/Eollivier/Biovid_corrected/'
+    pre_root_dir="../model/"
+    Biovid_img_all = '../Biovid/'
 
     tr_test = util.data_adapt(Resolution)
 
-    biovid_annot_test = '/export/livia/home/vision/Eollivier/Biovid_corrected/test_set.csv'
+    biovid_annot_test = '../test_set.csv'
 
     dataset_test = data_loader.Dataset_Biovid_image_binary_class(Biovid_img_all,biovid_annot_test,transform = tr_test.transform,IDs = None,nb_image = None,preload=False)
 
-    expr_tt_loader = torch.utils.data.DataLoader(dataset_test, batch_size=200, shuffle=False, num_workers=4)
-    """
+    expr_tt_loader = torch.utils.data.DataLoader(dataset_test, batch_size=20, shuffle=False, num_workers=4)
+
     par_Enc_FR_dir = os.path.join(pre_root_dir, 'Enc_FR_G.pkl')
     par_Enc_ER_dir = os.path.join(pre_root_dir, 'Enc_ER_G.pkl')
     par_dec_dir = os.path.join(pre_root_dir, 'dec.pkl')
@@ -139,34 +139,19 @@ def test():
 
     par_Dis_ER_dir = os.path.join(pre_root_dir, 'Dis_ER.pkl')
     
-    par_Enc_FR_dir = os.path.join(pre_root_dir, 'dis_val_Enc_FR_G.pkl')
-    par_Enc_ER_dir = os.path.join(pre_root_dir, 'dis_val_Enc_ER_G.pkl')
-    par_dec_dir = os.path.join(pre_root_dir, 'dis_val_dec.pkl')
-    par_fc_ER_dir = os.path.join(pre_root_dir, 'dis_val_fc_ER_G.pkl')
 
-    par_Dis_ER_dir = os.path.join(pre_root_dir, 'dis_val_Dis_ER.pkl')
-    """
-    par_Enc_FR_dir = os.path.join(pre_root_dir, 'epoch5_Enc_FR_G.pkl')
-    par_Enc_ER_dir = os.path.join(pre_root_dir, 'epoch5_Enc_ER_G.pkl')
-    par_dec_dir = os.path.join(pre_root_dir, 'epoch5_dec.pkl')
-    par_fc_ER_dir = os.path.join(pre_root_dir, 'epoch5_fc_ER_G.pkl')
-
-    par_Dis_ER_dir = os.path.join(pre_root_dir, 'epoch5_Dis_ER.pkl')
      
     # load parameters
     print('loading pretrained models......')
 
-    Dis_ER = model.Dis()
-    Gen = model.Gen(clsn_ER=2, Nz=256, GRAY=False, Nb=6)
-    # instantiate Expression Clssification Module (M_ER)
-    Dis_ER_val = model.Dis()
+    Dis_ER = models_inception.Dis()
+    Gen = models_inception.Gen(clsn_ER=2, Nz=256, GRAY=False, Nb=6)
+    Dis_ER_val = models_inception.Dis()
 
     Gen.to(device)
     Dis_ER.to(device)
     Dis_ER_val.to(device)
 
-
-    #Gen.enc_FR.load_state_dict(util.del_extra_keys(par_Enc_FR_dir))
     Gen.enc_ER.load_state_dict(util.del_extra_keys(par_Enc_ER_dir))
     Gen.dec.load_state_dict(util.del_extra_keys(par_dec_dir))
     Dis_ER_val.enc.load_state_dict(util.del_extra_keys(par_Enc_ER_dir))
@@ -181,20 +166,12 @@ def test():
         Dis_ER_val.eval()
         accuraccy, ce = Val_acc(expr_tt_loader, Dis_ER_val, CE, device)
         print(accuraccy)
-        #print('\n')
-        #print('accuracy is : %f' % (tt_acc))
-        #print('validation cross enntropy is : %f' % (tt_ce))
+
 
     with torch.no_grad():
         Dis_ER.eval()
         accuraccy, ce= Val_acc(expr_tt_loader, Dis_ER, CE, device)
         print(accuraccy)
-        #print('\n')
-        #print('accuracy is : %f' % (tt_acc))
-        #print('validation cross enntropy is : %f' % (tt_ce))
-
-
-
 
 
         
